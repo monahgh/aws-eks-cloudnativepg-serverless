@@ -1,0 +1,22 @@
+# Requires the CloudNativePG operator (installed by scripts/deploy_k8s.sh).
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: pg-lab
+  namespace: pgops
+spec:
+  instances: 2
+  storage:
+    size: 5Gi
+    storageClass: gp3
+  postgresql:
+    parameters:
+      shared_preload_libraries: "pg_stat_statements"
+  bootstrap:
+    initdb:
+      database: appdb
+      owner: appuser
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: topology.kubernetes.io/zone
+    podAntiAffinityType: required
